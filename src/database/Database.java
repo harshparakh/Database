@@ -58,7 +58,7 @@ $dbname="2309296_database";*/
      */
     public static void main(String[] args) {
         //Insert user hashed pass
-        insertUser("iain","iain woodburn","password",12456789,"test@email","good");
+        //insertUser("harshparakh","Harsh Parakh","password",12456789,"hparakh@purdue.edu","Available");
         
         Scanner scan = new Scanner(System.in);
         System.out.print("Enter your username: ");
@@ -69,12 +69,13 @@ $dbname="2309296_database";*/
         
         if(BCrypt.checkpw(password , getPassword(username))){//password.equals(getPassword(username))){ //replace with BCrypt method checkpw after getting hashed password
             System.out.println("Correct! Logging in...");
-        } 
+         
        
-       System.out.println(getEmail(username));
-       updateEmail(username,"newEmail@email");
-       System.out.println(getEmail(username));
-       
+       //System.out.println(getStatus(username));
+       //updateStatus(username,"New Status");
+       //System.out.println(getStatus(username));
+       }
+        
        //System.out.println(deleteUser(username));
        //System.out.println(getEmail(username));
     }
@@ -152,6 +153,19 @@ $dbname="2309296_database";*/
         }
         return null;
     }
+    
+    public static boolean updateFullName(String username, String newFullName){
+    getConnectionToDB();
+    
+    try{
+        myStatement.executeUpdate("UPDATE users SET user_full_name='" + newFullName + "' WHERE user_name='" + username + "'");
+        return true;
+    }
+    catch (Exception e){
+        e.printStackTrace();
+    }
+    return false;
+    }
 
     public static String getPassword(String username){
 
@@ -171,6 +185,22 @@ $dbname="2309296_database";*/
             e.printStackTrace();
         }
         return null;
+    }
+    
+    public static boolean updatePassword(String username, String newPass){
+    getConnectionToDB();
+    
+    String salt = BCrypt.gensalt(salt_key);
+    String hashed_password = BCrypt.hashpw(newPass, salt);
+        
+    try{
+        myStatement.executeUpdate("UPDATE users SET user_password='" + hashed_password + "' WHERE user_name='" + username + "'");
+        return true;
+    }
+    catch (Exception e){
+        e.printStackTrace();
+    }
+    return false;
     }
 
     public static int getPhone(String username){
@@ -192,6 +222,19 @@ $dbname="2309296_database";*/
         }
         return -1;
     }
+    
+    public static boolean updatePhone(String username, int newNumber){
+    getConnectionToDB();
+    
+    try{
+        myStatement.executeUpdate("UPDATE users SET user_phone='" + newNumber + "' WHERE user_name='" + username + "'");
+        return true;
+    }
+    catch (Exception e){
+        e.printStackTrace();
+    }
+    return false;
+    }
 
     public static String getEmail(String username){
 
@@ -212,13 +255,30 @@ $dbname="2309296_database";*/
         }
         return null;
     }
-
+    
     public static boolean updateEmail(String username, String newEmail){
+    getConnectionToDB();
+    
+    try{
+        myStatement.executeUpdate("UPDATE users SET user_email='" + newEmail + "' WHERE user_name='" + username + "'");
+        return true;
+    }
+    catch (Exception e){
+        e.printStackTrace();
+    }
+    return false;
+    }
+    
+    public static boolean verifyEmail(String email){
         getConnectionToDB();
         try{
             
-            myStatement.executeUpdate("UPDATE users SET user_email='" + newEmail + "' WHERE user_name='" + username + "'");
-            return true;
+           myRs = myStatement.executeQuery("SELECT * FROM users WHERE user_email='" + email +"'");
+
+if(!myRs.next()){
+return true; //If there is no such entry in that table
+}
+ 
             
         }catch (Exception e){
             e.printStackTrace();
@@ -256,5 +316,17 @@ $dbname="2309296_database";*/
         }
         return null;
     }
-
+      
+    public static boolean updateStatus(String username, String newStatus){
+    getConnectionToDB();
+    
+    try{
+        myStatement.executeUpdate("UPDATE users SET user_status='" + newStatus + "' WHERE user_name='" + username + "'");
+        return true;
+    }
+    catch (Exception e){
+        e.printStackTrace();
+    }
+    return false;
+    }
 }
